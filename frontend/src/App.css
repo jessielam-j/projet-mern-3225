@@ -1,38 +1,244 @@
-.App {
-  text-align: center;
+:root {
+  --bg: #f5f7fb;
+  --panel: #ffffff;
+  --ink: #14213d;
+  --muted: #5f6b7a;
+  --line: #d8dee8;
+  --primary: #1769aa;
+  --primary-dark: #0f4f81;
+  --success-bg: #e9f7ef;
+  --success-ink: #17633a;
+  --error-bg: #fdecec;
+  --error-ink: #9f1d1d;
+  --danger: #b42318;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+body {
+  background: var(--bg);
+  color: var(--ink);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+button,
+input {
+  font: inherit;
+}
+
+button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 6px;
+  padding: 0 16px;
+  background: var(--primary);
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+button:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+button.secondary {
+  background: #e7eef8;
+  color: var(--primary-dark);
+}
+
+button.secondary:hover:not(:disabled) {
+  background: #d7e4f4;
+}
+
+button.danger {
+  background: var(--danger);
+}
+
+input {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: #ffffff;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border-bottom: 1px solid var(--line);
+  padding: 12px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  color: var(--muted);
+  font-size: 0.86rem;
+  text-transform: uppercase;
+}
+
+.app-shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 32px 0;
+}
+
+.app-header {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
-.App-link {
-  color: #61dafb;
+.app-header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  line-height: 1;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--primary);
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.doc-link {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 14px;
+  color: var(--primary-dark);
+  text-decoration: none;
+  font-weight: 800;
+  background: #ffffff;
+}
+
+.notice {
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  font-weight: 700;
+}
+
+.notice.success {
+  background: var(--success-bg);
+  color: var(--success-ink);
+}
+
+.notice.error {
+  background: var(--error-bg);
+  color: var(--error-ink);
+}
+
+.layout-grid,
+.workspace-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.workspace-grid {
+  grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.7fr);
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  box-shadow: 0 12px 28px rgba(20, 33, 61, 0.06);
+}
+
+.panel h2 {
+  margin: 0 0 14px;
+  font-size: 1.25rem;
+}
+
+.panel-title-row,
+.button-row,
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.panel-title-row {
+  justify-content: space-between;
+}
+
+.form-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkbox-row input {
+  width: 18px;
+  min-height: 18px;
+}
+
+.session-box,
+.profile-summary {
+  display: grid;
+  gap: 12px;
+}
+
+.session-box p,
+.profile-summary p {
+  margin: 0;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.empty-state {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+@media (max-width: 850px) {
+  .app-header,
+  .layout-grid,
+  .workspace-grid {
+    grid-template-columns: 1fr;
   }
-  to {
-    transform: rotate(360deg);
+
+  .app-header {
+    display: grid;
+  }
+
+  .button-row,
+  .table-actions {
+    flex-wrap: wrap;
   }
 }

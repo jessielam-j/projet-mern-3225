@@ -1,7 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
+const path = require("path");
+
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
 const app = express();
 
@@ -20,6 +22,10 @@ app.use("/profils", require("./routes/profils.routes"));
 app.use("/motdepasse", require("./routes/password.routes"));
 
 app.use("/auth", require("./routes/auth.router"));
+
+
+app.use("/documentation", require("./routes/documentation.routes"));
+
 // Test route
 app.get("/", (req, res) => {
     res.send("API is running");
@@ -30,9 +36,6 @@ app.listen(5000, () => {
     console.log("Server running on port 5000");
 });
 
-
-
 app.use((err, req, res, next) => {
     res.status(500).json({ message: err.message });
 });
-
