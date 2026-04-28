@@ -1,19 +1,21 @@
 const router = require("express").Router();
 const ctrl = require("../controllers/profils.controller");
+const auth = require("../middlewares/auth");
+const admin = require("../middlewares/admin");
 
-// GET tous les profils
-router.get("/", ctrl.getUsers);
+// GET tous les profils - administrateurs seulement
+router.get("/", auth, admin, ctrl.getUsers);
 
-// GET un profil
-router.get("/:id", ctrl.getUser);
+// GET un profil - administrateur ou proprietaire du profil
+router.get("/:id", auth, ctrl.getUser);
 
-// POST création utilisateur
+// POST creation utilisateur
 router.post("/", ctrl.createUser);
 
-// PUT modification
-router.put("/:id", ctrl.updateUser);
+// PUT modification - administrateur ou proprietaire du profil
+router.put("/:id", auth, ctrl.updateUser);
 
-// DELETE suppression
-router.delete("/:id", ctrl.deleteUser);
+// DELETE suppression - administrateurs seulement
+router.delete("/:id", auth, admin, ctrl.deleteUser);
 
 module.exports = router;
