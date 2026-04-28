@@ -47,6 +47,11 @@ button:disabled {
   opacity: 0.55;
 }
 
+button.danger:disabled {
+  background: #c9ced6;
+  color: #4b5563;
+}
+
 button.secondary {
   background: #e7eef8;
   color: var(--primary-dark);
@@ -58,6 +63,19 @@ button.secondary:hover:not(:disabled) {
 
 button.danger {
   background: var(--danger);
+}
+
+button.toggle-password {
+  min-width: 96px;
+  border-left: 1px solid var(--line);
+  border-radius: 0 6px 6px 0;
+  background: #e7eef8;
+  color: var(--primary-dark);
+}
+
+button.toggle-password:hover:not(:disabled) {
+  background: #d7e4f4;
+  color: var(--primary-dark);
 }
 
 input {
@@ -193,6 +211,15 @@ th {
 .form-grid {
   display: grid;
   gap: 14px;
+}
+
+.password-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.password-field input {
+  border-radius: 6px 0 0 6px;
 }
 
 .checkbox-row {

@@ -35,6 +35,11 @@ function App() {
   const [profiles, setProfiles] = useState([]);
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [passwordLength, setPasswordLength] = useState(12);
+  const [visiblePasswords, setVisiblePasswords] = useState({
+    create: false,
+    login: false,
+    edit: false,
+  });
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const isAdmin = Boolean(session?.isAdmin);
@@ -52,6 +57,13 @@ function App() {
     setError(text);
     setMessage("");
   };
+
+  function togglePasswordVisibility(field) {
+    setVisiblePasswords((current) => ({
+      ...current,
+      [field]: !current[field],
+    }));
+  }
 
   async function request(path, options = {}) {
     const response = await fetch(`${API_URL}${path}`, options);
@@ -75,7 +87,7 @@ function App() {
       });
 
       setCreateForm(emptyProfile);
-      showMessage(`Profil cree pour ${profile.pseudo}`);
+      showMessage(`Profil créé pour ${profile.pseudo}`);
 
       if (isAdmin) {
         await loadAllProfiles();
@@ -118,7 +130,7 @@ function App() {
     setProfiles([]);
     setSelectedProfile(null);
     setEditForm(emptyEdit);
-    showMessage("Session fermee");
+    showMessage("Session fermée");
   }
 
   async function generatePassword(target) {
@@ -131,7 +143,7 @@ function App() {
       } else {
         setCreateForm((form) => ({ ...form, password: data.password }));
       }
-      showMessage("Mot de passe genere");
+      showMessage("Mot de passe généré");
     } catch (err) {
       showError(err.message);
     }
@@ -144,7 +156,7 @@ function App() {
       });
 
       setProfiles(data);
-      showMessage("Profils charges");
+      showMessage("Profils chargés");
     } catch (err) {
       showError(err.message);
     }
@@ -177,7 +189,7 @@ function App() {
     event.preventDefault();
 
     if (!selectedProfile?._id) {
-      showError("Aucun profil selectionne");
+      showError("Aucun profil selectionné");
       return;
     }
 
@@ -221,7 +233,7 @@ function App() {
       setSelectedProfile(null);
       setEditForm(emptyEdit);
       await loadAllProfiles();
-      showMessage("Profil supprime");
+      showMessage("Profil supprimé");
     } catch (err) {
       showError(err.message);
     }
@@ -247,7 +259,7 @@ function App() {
 
       <section className="layout-grid">
         <div className="panel">
-          <h2>Creer un profil</h2>
+          <h2>Créer un profil</h2>
           <form onSubmit={createProfile} className="form-grid">
             <label>
               Pseudo
@@ -270,16 +282,21 @@ function App() {
 
             <label>
               Mot de passe
-              <input
-                type="text"
-                value={createForm.password}
-                onChange={(event) => setCreateForm({ ...createForm, password: event.target.value })}
-                required
-              />
+              <div className="password-field">
+                <input
+                  type={visiblePasswords.create ? "text" : "password"}
+                  value={createForm.password}
+                  onChange={(event) => setCreateForm({ ...createForm, password: event.target.value })}
+                  required
+                />
+                <button type="button" className="toggle-password" onClick={() => togglePasswordVisibility("create")}>
+                  {visiblePasswords.create ? "Masquer" : "Afficher"}
+                </button>
+              </div>
             </label>
 
             <label>
-              Longueur
+              Longueur du mot de passe à générer
               <input
                 type="number"
                 min="1"
@@ -299,9 +316,9 @@ function App() {
 
             <div className="button-row">
               <button type="button" className="secondary" onClick={() => generatePassword("create")}>
-                Generer
+                Générer un mot de passe
               </button>
-              <button type="submit">Creer</button>
+              <button type="submit">Créer</button>
             </div>
           </form>
         </div>
@@ -322,12 +339,17 @@ function App() {
 
               <label>
                 Mot de passe
-                <input
-                  type="password"
-                  value={loginForm.password}
-                  onChange={(event) => setLoginForm({ ...loginForm, password: event.target.value })}
-                  required
-                />
+                <div className="password-field">
+                  <input
+                    type={visiblePasswords.login ? "text" : "password"}
+                    value={loginForm.password}
+                    onChange={(event) => setLoginForm({ ...loginForm, password: event.target.value })}
+                    required
+                  />
+                  <button type="button" className="toggle-password" onClick={() => togglePasswordVisibility("login")}>
+                    {visiblePasswords.login ? "Masquer" : "Afficher"}
+                  </button>
+                </div>
               </label>
 
               <button type="submit">Se connecter</button>
@@ -335,21 +357,16 @@ function App() {
           ) : (
             <div className="session-box">
               <p>
-                Connecte comme <strong>{isAdmin ? "administrateur" : "utilisateur"}</strong>
+                Connecté comme <strong>{isAdmin ? "administrateur" : "utilisateur"}</strong>
               </p>
               <div className="button-row">
-                {isAdmin && (
-                  <button type="button" onClick={() => loadAllProfiles()}>
-                    Charger les profils
-                  </button>
-                )}
                 {!isAdmin && session?.id && (
                   <button type="button" onClick={() => loadProfile(session.id)}>
                     Mon profil
                   </button>
                 )}
                 <button type="button" className="secondary" onClick={logout}>
-                  Deconnexion
+                  Déconnexion
                 </button>
               </div>
             </div>
@@ -375,7 +392,7 @@ function App() {
                   <tr>
                     <th>Pseudo</th>
                     <th>Courriel</th>
-                    <th>Role</th>
+                    <th>Rôle</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -388,9 +405,9 @@ function App() {
                       <td>
                         <div className="table-actions">
                           <button type="button" className="secondary" onClick={() => selectProfile(profile)}>
-                            Ouvrir
+                            Modifier
                           </button>
-                          <button type="button" className="danger" onClick={() => deleteProfile(profile._id)}>
+                          <button type="button" className="danger" onClick={() => deleteProfile(profile._id)} disabled={profile._id === session?.id}>
                             Supprimer
                           </button>
                         </div>
@@ -399,7 +416,7 @@ function App() {
                   ))}
                 </tbody>
               </table>
-              {profiles.length === 0 && <p className="empty-state">Aucun profil charge</p>}
+              {profiles.length === 0 && <p className="empty-state">Aucun profil chargé</p>}
             </div>
           ) : (
             <div className="profile-summary">
@@ -407,7 +424,7 @@ function App() {
                 <>
                   <p><strong>Pseudo:</strong> {selectedProfile.pseudo}</p>
                   <p><strong>Courriel:</strong> {selectedProfile.email}</p>
-                  <p><strong>Role:</strong> {selectedProfile.isAdmin ? "Admin" : "Utilisateur"}</p>
+                  <p><strong>Rôle:</strong> {selectedProfile.isAdmin ? "Admin" : "Utilisateur"}</p>
                 </>
               ) : (
                 <p className="empty-state">Connecte-toi pour charger ton profil</p>
@@ -418,6 +435,9 @@ function App() {
 
         <div className="panel">
           <h2>Modifier</h2>
+          {!selectedProfile && (
+            <p className="empty-state">Sélectionne un profil à modifier</p>
+          )}
           <form onSubmit={updateProfile} className="form-grid">
             <label>
               Pseudo
@@ -442,12 +462,17 @@ function App() {
 
             <label>
               Nouveau mot de passe
-              <input
-                type="text"
-                value={editForm.password}
-                onChange={(event) => setEditForm({ ...editForm, password: event.target.value })}
-                disabled={!selectedProfile}
-              />
+              <div className="password-field">
+                <input
+                  type={visiblePasswords.edit ? "text" : "password"}
+                  value={editForm.password}
+                  onChange={(event) => setEditForm({ ...editForm, password: event.target.value })}
+                  disabled={!selectedProfile}
+                />
+                <button type="button" className="toggle-password" onClick={() => togglePasswordVisibility("edit")} disabled={!selectedProfile}>
+                  {visiblePasswords.edit ? "Masquer" : "Afficher"}
+                </button>
+              </div>
             </label>
 
             {isAdmin && (
@@ -464,7 +489,7 @@ function App() {
 
             <div className="button-row">
               <button type="button" className="secondary" onClick={() => generatePassword("edit")} disabled={!selectedProfile}>
-                Generer
+                Générer
               </button>
               <button type="submit" disabled={!selectedProfile || !token}>
                 Enregistrer

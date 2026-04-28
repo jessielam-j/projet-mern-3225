@@ -1,8 +1,9 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
-const client = require("@sendgrid/client");
 
-client.setApiKey(process.env.SENDGRID_API_KEY);
+const hasEmailValidationKey = () => {
+    return Boolean(process.env.EMAIL_VALIDATION_API_KEY);
+};
 
 // Retire le mot de passe avant de renvoyer un profil au client
 const sanitizeUser = (user) => {
@@ -14,14 +15,25 @@ const sanitizeUser = (user) => {
 
 // Valide que le courriel existe vraiment avec l'API externe demandee
 const validateEmail = async (email) => {
-    const request = {
-        url: "/v3/validations/email",
-        method: "POST",
-        body: { email }
-    };
+    if (!hasEmailValidationKey()) {
+        throw new Error("EMAIL_VALIDATION_API_KEY est manquant dans .env");
+    }
 
-    const [, body] = await client.request(request);
-    return body.result && body.result.verdict === "Valid";
+    const params = new URLSearchParams({
+        api_key: process.env.EMAIL_VALIDATION_API_KEY,
+        email_address: email,
+        timeout: "20"
+    });
+
+    const response = await fetch(`https://api.zeruh.com/v1/verify?${params.toString()}`);
+
+    const body = await response.json();
+
+    if (!response.ok) {
+        throw new Error(body.message || "Email validation failed");
+    }
+
+    return body.success && body.result && body.result.status === "deliverable";
 };
 
 // Un admin peut acceder a tous les profils; un utilisateur seulement au sien

@@ -15,7 +15,7 @@ const routes = [
         roles: ["admin", "user"],
         method: "GET",
         path: "/motdepasse/{longueur}",
-        description: "Genere un mot de passe aleatoire de la longueur demandee.",
+        description: "Génère un mot de passe aléatoire de la longueur demandée.",
         curl: `curl ${API_URL}/motdepasse/12`,
         response: `{ "password": "aB8xKp20LmNz" }`
     },
@@ -23,7 +23,7 @@ const routes = [
         roles: ["admin", "user"],
         method: "POST",
         path: "/profils",
-        description: "Cree un profil apres validation du courriel et chiffrement du mot de passe.",
+        description: "Crée un profil après validation du courriel par API REST externe et chiffrement du mot de passe.",
         curl: `curl -X POST ${API_URL}/profils -H "Content-Type: application/json" -d "{\\"pseudo\\":\\"alice\\",\\"email\\":\\"alice@test.com\\",\\"password\\":\\"Secret123\\",\\"isAdmin\\":false}"`,
         response: `{ "_id": "...", "pseudo": "alice", "email": "alice@test.com", "isAdmin": false }`
     },
@@ -31,7 +31,7 @@ const routes = [
         roles: ["admin"],
         method: "GET",
         path: "/profils",
-        description: "Retourne tous les profils. Reserve aux administrateurs.",
+        description: "Retourne tous les profils. Réservé aux administrateurs.",
         curl: `curl ${API_URL}/profils -H "Authorization: Bearer {token}"`,
         response: `[{ "_id": "...", "pseudo": "alice", "email": "alice@test.com", "isAdmin": false }]`
     },
@@ -55,7 +55,7 @@ const routes = [
         roles: ["admin"],
         method: "DELETE",
         path: "/profils/{id}",
-        description: "Supprime un profil. Reserve aux administrateurs.",
+        description: "Supprime un profil. Résérve aux administrateurs.",
         curl: `curl -X DELETE ${API_URL}/profils/{id} -H "Authorization: Bearer {token}"`,
         response: `{ "message": "deleted" }`
     }
@@ -105,7 +105,7 @@ router.get("/", (req, res) => {
         </head>
         <body>
             <h1>Documentation API REST</h1>
-            <p>Les routes retournent des donnees au format JSON. Les routes protegees utilisent l'entete <code>Authorization: Bearer {token}</code>.</p>
+            <p>Les routes retournent des données au format JSON. Les routes protégées utilisent l'entête <code>Authorization: Bearer {token}</code>.</p>
 
             <h2>Routes administrateur</h2>
             <table>
